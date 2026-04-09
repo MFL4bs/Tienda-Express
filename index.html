@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TiendaExpress</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- TOAST CONTAINER -->
+  <div id="toast-container"></div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">🛒 TiendaExpress</div>
+    <nav id="mainNav">
+      <a href="#" onclick="showSection('catalog'); closeMenu()">Inicio</a>
+
+      <!-- Dropdown: Mi Cuenta -->
+      <div class="nav-group" id="navGroupAccount">
+        <button class="nav-group-btn" onclick="toggleNavGroup('navGroupAccount')">
+          Mi Cuenta <span class="nav-arrow">▼</span>
+        </button>
+        <div class="nav-dropdown">
+          <a href="#" onclick="showSection('tracking'); closeMenu(); closeNavGroups()">📦 Mis Pedidos</a>
+          <a href="#" id="navAdmin" onclick="showSection('admin'); closeMenu(); closeNavGroups()" class="hidden">⚙️ Admin</a>
+          <a href="#" id="navDriver" onclick="showSection('driver'); closeMenu(); closeNavGroups()" class="hidden">🚴 Mis Entregas</a>
+        </div>
+      </div>
+
+      <button class="cart-btn nav-cart" id="navCartMobile" onclick="showSection('cart'); closeMenu()">
+        🛒 Carrito <span class="cart-badge">0</span>
+      </button>
+    </nav>
+    <div class="header-right">
+      <span id="headerUser" class="header-user"></span>
+      <button class="cart-btn desktop-cart" id="navCartDesktop" onclick="showSection('cart')">
+        🛒 <span id="cartCount" class="cart-badge">0</span>
+      </button>
+      <button class="cart-btn logout-btn" onclick="doLogout()">Salir</button>
+      <button class="menu-btn" onclick="toggleMenu()" aria-label="Menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <div class="page-wrapper">
+
+    <!-- ══════════════ SECCIÓN 1: CATÁLOGO ══════════════ -->
+    <main id="section-catalog">
+
+      <!-- HERO VISUAL -->
+      <div class="place-hero">
+        <div class="place-streetview">
+          <div class="place-streetview-bg"></div>
+          <div class="place-hero-overlay">
+            <div class="place-hero-text">
+              <span class="place-tag">📍 Bogotá, Colombia</span>
+              <h2>Entregamos en tu puerta</h2>
+              <p>Rápido, fresco y directo desde nuestra cocina</p>
+            </div>
+          </div>
+        </div>
+        <div class="place-map-embed">
+          <iframe
+            src="https://www.openstreetmap.org/export/embed.html?bbox=-74.12%2C4.55%2C-74.03%2C4.68&amp;layer=mapnik&amp;marker=4.6097%2C-74.0817"
+            allowfullscreen loading="lazy"
+          ></iframe>
+          <div class="place-map-label">📍 Ubicación de la tienda</div>
+        </div>
+      </div>
+
+      <!-- CHIPS DE INFO -->
+      <div class="place-chips">
+        <div class="chip">🕐 Abierto ahora</div>
+        <div class="chip">🚴 Domicilio 30–45 min</div>
+        <div class="chip">⭐ 4.8 · 320 reseñas</div>
+        <div class="chip">💳 Efectivo y tarjeta</div>
+      </div>
+
+      <div class="section-hero">
+        <h1>¿Qué quieres pedir hoy?</h1>
+        <p>Elige tus productos y recíbelos en la puerta de tu casa</p>
+      </div>
+
+      <div class="categories">
+        <button class="cat-btn active" onclick="filterCat('all', this)">Todos</button>
+        <button class="cat-btn" onclick="filterCat('burger', this)">🍔 Hamburguesas</button>
+        <button class="cat-btn" onclick="filterCat('side', this)">🍟 Acompañamientos</button>
+        <button class="cat-btn" onclick="filterCat('drink', this)">🥤 Bebidas</button>
+      </div>
+
+      <div class="products-grid" id="productsGrid">
+        <!-- Hamburguesas -->
+        <div class="product-card" data-cat="burger">
+          <div class="product-img">🍔</div>
+          <div class="product-body">
+            <h3>Hamburguesa Clásica</h3>
+            <p>Carne, lechuga, tomate, queso cheddar</p>
+            <div class="product-footer">
+              <span class="price">$9.000</span>
+              <button onclick="addToCart('Hamburguesa Clásica', 9000)">+ Agregar</button>
+            </div>
+          </div>
+        </div>
+        <div class="product-card" data-cat="burger">
+          <div class="product-img">🍔</div>
+          <div class="product-body">
+            <h3>Hamburguesa BBQ</h3>
+            <p>Carne doble, tocino, salsa BBQ, cebolla</p>
+            <div class="product-footer">
+              <span class="price">$12.000</span>
+              <button onclick="addToCart('Hamburguesa BBQ', 12000)">+ Agregar</button>
+            </div>
+          </div>
+        </div>
+        <div class="product-card" data-cat="burger">
+          <div class="product-img">🌮</div>
+          <div class="product-body">
+            <h3>Wrap Pollo</h3>
+            <p>Pollo a la plancha, aguacate, salsa ranch</p>
+            <div class="product-footer">
+              <span class="price">$10.500</span>
+              <button onclick="addToCart('Wrap Pollo', 10500)">+ Agregar</button>
+            </div>
+          </div>
+        </div>
+        <!-- Acompañamientos -->
+        <div class="product-card" data-cat="side">
+          <div class="product-img">🍟</div>
+          <div class="product-body">
+            <h3>Papas Fritas</h3>
+            <p>Porción grande con sal y salsa</p>
+            <div class="product-footer">
+              <span class="price">$6.500</span>
+              <button onclick="addToCart('Papas Fritas', 6500)">+ Agregar</button>
+            </div>
+          </div>
+        </div>
+        <div class="product-card" data-cat="side">
+          <div class="product-img">🧅</div>
+          <div class="product-body">
+            <h3>Aros de Cebolla</h3>
+            <p>Crujientes, con salsa de queso</p>
+            <div class="product-footer">
+              <span class="price">$7.000</span>
+              <button onclick="addToCart('Aros de Cebolla', 7000)">+ Agregar</button>
+            </div>
+          </div>
+        </div>
+        <!-- Bebidas -->
+        <div class="product-card" data-cat="drink">
+          <div class="product-img">🥤</div>
+          <div class="product-body">
+            <h3>Gaseosa 500ml</h3>
+            <p>Coca-Cola, Sprite o Fanta</p>
+            <div class="product-footer">
+              <span class="price">$2.500</span>
+              <button onclick="addToCart('Gaseosa 500ml', 2500)">+ Agregar</button>
+            </div>
+          </div>
+        </div>
+        <div class="product-card" data-cat="drink">
+          <div class="product-img">🧃</div>
+          <div class="product-body">
+            <h3>Jugo Natural</h3>
+            <p>Mango, maracuyá o mora</p>
+            <div class="product-footer">
+              <span class="price">$4.000</span>
+              <button onclick="addToCart('Jugo Natural', 4000)">+ Agregar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BARRA FLOTANTE DEL CARRITO -->
+      <div id="cartBar" class="cart-bar hidden">
+        <span id="cartBarText">0 productos · $0</span>
+        <button onclick="showSection('cart')">Ver pedido →</button>
+      </div>
+    </main>
+
+    <!-- ══════════════ SECCIÓN 2: CARRITO / CHECKOUT ══════════════ -->
+    <main id="section-cart" class="hidden">
+      <div class="section-hero">
+        <h1>Tu pedido</h1>
+        <p>Revisa los productos y confirma tu dirección</p>
+      </div>
+
+      <div class="cart-layout">
+        <!-- Lista de items -->
+        <div class="order-card">
+          <h2>Productos seleccionados</h2>
+          <ul class="items-list" id="cartItems">
+            <li class="empty-cart">Aún no has agregado productos</li>
+          </ul>
+          <div class="total">Total: <strong id="cartTotal">$0</strong></div>
+          <button class="btn-back" onclick="showSection('catalog')">← Seguir comprando</button>
+        </div>
+
+        <!-- Formulario de entrega -->
+        <div class="order-card">
+          <h2>Datos de entrega</h2>
+          <form id="checkoutForm" onsubmit="placeOrder(event)">
+            <label>Nombre completo
+              <input type="text" id="custName" placeholder="Tu nombre" required />
+            </label>
+            <label>Dirección
+              <input type="text" id="custAddress" placeholder="Calle 123 # 45-67" required />
+            </label>
+            <label>Teléfono
+              <input type="tel" id="custPhone" placeholder="+57 300 000 0000" required />
+            </label>
+            <label>Notas (opcional)
+              <input type="text" id="custNotes" placeholder="Ej: Apto 301, timbre roto" />
+            </label>
+            <button type="submit" class="btn-order">Confirmar pedido 🚀</button>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <!-- ══════════════ SECCIÓN 3: MIS PEDIDOS ══════════════ -->
+    <main id="section-tracking" class="hidden">
+      <div class="section-hero">
+        <h1>Mis Pedidos</h1>
+        <p>Historial y seguimiento de tus pedidos</p>
+      </div>
+
+      <!-- LISTA DE PEDIDOS DEL USUARIO -->
+      <div class="my-orders-wrap">
+        <div class="order-card" style="margin-bottom:24px">
+          <h2>Tus pedidos recientes</h2>
+          <ul class="my-orders-list" id="myOrdersList">
+            <li class="empty-cart">No tienes pedidos aún</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- PANEL DE RASTREO (se muestra al hacer clic en un pedido) -->
+      <div id="orderPanel" class="hidden" style="max-width:1000px;margin:0 auto;padding:0 16px;">
+
+        <section class="order-info">
+          <div class="order-card">
+            <h2>Pedido <span id="orderId"></span></h2>
+            <p class="status-label">Estado: <span id="orderStatus" class="badge">Preparando</span></p>
+            <ul class="timeline">
+              <li>✅ Pedido confirmado</li>
+              <li>👨‍🍳 En preparación</li>
+              <li>🚴 En camino</li>
+              <li>📦 Entregado</li>
+            </ul>
+          </div>
+          <div class="order-card">
+            <h2>Detalle del pedido</h2>
+            <ul class="items-list" id="trackingItems"></ul>
+            <div class="total">Total: <strong id="trackingTotal"></strong></div>
+          </div>
+        </section>
+
+        <section class="map-section">
+          <h2>📍 Ubicación en tiempo real</h2>
+          <div id="map"></div>
+          <div class="map-legend">
+            <span>🏪 Tienda</span>
+            <span>🚴 Repartidor</span>
+            <span>🏠 Tu dirección</span>
+          </div>
+        </section>
+
+        <section class="contact-section">
+          <h2>Contactar al domiciliario</h2>
+          <div class="driver-card">
+            <div class="driver-avatar">🧑‍🦱</div>
+            <div class="driver-info">
+              <strong>Carlos Mendoza</strong>
+              <p>⭐ 4.9 · 320 entregas</p>
+              <p>Tiempo estimado: <strong id="eta">12 min</strong></p>
+            </div>
+            <div class="driver-actions">
+              <a href="tel:+573001234567" class="btn btn-call">📞 Llamar</a>
+              <a id="waLink" href="https://wa.me/573001234567" target="_blank" class="btn btn-whatsapp">💬 WhatsApp</a>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- ══════════════ SECCIÓN 5: DOMICILIARIO ══════════════ -->
+    <main id="section-driver" class="hidden">
+      <div class="section-hero">
+        <h1>🚴 Panel del Domiciliario</h1>
+        <p>Gestiona tus entregas activas</p>
+      </div>
+      <div class="driver-panel">
+        <div class="order-card">
+          <h2>Pedidos asignados</h2>
+          <ul class="driver-orders" id="driverOrders">
+            <li class="empty-cart">No hay pedidos activos</li>
+          </ul>
+        </div>
+        <div class="order-card">
+          <h2>Historial de entregas</h2>
+          <ul class="driver-orders" id="driverHistory">
+            <li class="empty-cart">Sin entregas completadas</li>
+          </ul>
+        </div>
+      </div>
+    </main>
+
+    <!-- ══════════════ SECCIÓN 4: ADMIN ══════════════ -->
+    <main id="section-admin" class="hidden">
+      <div class="section-hero">
+        <h1>⚙️ Panel de Administrador</h1>
+        <p>Agrega, edita o elimina productos del menú</p>
+      </div>
+
+      <div class="admin-layout">
+        <!-- Formulario agregar producto -->
+        <div class="order-card">
+          <h2>Agregar nuevo producto</h2>
+          <form id="adminForm" onsubmit="addProduct(event)">
+            <label>Nombre del producto
+              <input type="text" id="pName" placeholder="Ej: Pizza Margarita" required/>
+            </label>
+            <label>Descripción
+              <input type="text" id="pDesc" placeholder="Ingredientes o descripción" required/>
+            </label>
+            <label>Precio (sin puntos)
+              <input type="number" id="pPrice" placeholder="Ej: 15000" min="100" required/>
+            </label>
+            <label>Emoji / ícono
+              <input type="text" id="pEmoji" placeholder="Ej: 🍕" maxlength="4" required/>
+            </label>
+            <label>Categoría
+              <select id="pCat">
+                <option value="burger">🍔 Hamburguesas</option>
+                <option value="side">🍟 Acompañamientos</option>
+                <option value="drink">🥤 Bebidas</option>
+                <option value="other">⭐ Otros</option>
+              </select>
+            </label>
+            <button type="submit" class="btn-order">+ Agregar al menú</button>
+          </form>
+        </div>
+
+        <!-- Lista de productos actuales -->
+        <div class="order-card">
+          <h2>Productos en el menú</h2>
+          <ul class="admin-product-list" id="adminProductList"></ul>
+        </div>
+      </div>
+    </main>
+
+  </div><!-- /page-wrapper -->
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 TiendaExpress · Todos los derechos reservados</p>
+    <p class="footer-brand">By <strong>MFL4bs</strong></p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    // Fallback: si Google Maps no carga, definir initMap vacío para que no rompa
+    window.initMap = window.initMap || function() {};
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer onerror="console.warn('Google Maps no cargó')"></script>
+</body>
+</html>

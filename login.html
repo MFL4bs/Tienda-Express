@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TiendaExpress — Acceso</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    .login-wrapper {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.04) 0%, transparent 70%), var(--bg);
+      padding: clamp(10px, 4vw, 24px);
+      overflow-y: auto;
+    }
+
+    .login-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: clamp(14px, 3vw, 24px);
+      padding: clamp(20px, 5vw, 36px) clamp(16px, 5vw, 32px);
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+    }
+
+    .login-logo {
+      text-align: center;
+      font-size: clamp(1.3rem, 4vw, 1.8rem);
+      font-weight: 800;
+      color: #f0f0f0;
+      margin-bottom: 4px;
+    }
+
+    .login-subtitle {
+      text-align: center;
+      color: var(--muted);
+      font-size: clamp(0.75rem, 2vw, 0.85rem);
+      margin-bottom: clamp(16px, 3vh, 24px);
+    }
+
+    /* TABS */
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: clamp(16px, 3vh, 24px);
+      border: 1px solid var(--border);
+    }
+
+    .tab-btn {
+      padding: clamp(7px, 1.5vh, 10px);
+      border: none;
+      border-radius: 9px;
+      background: transparent;
+      color: var(--muted);
+      font-size: clamp(0.78rem, 2vw, 0.88rem);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .tab-btn:hover  { background: #2a2a2a; color: #ddd; }
+    .tab-btn.active { background: #444; color: #fff; }
+    .tab-btn:active { background: #c0392b !important; color: white !important; }
+
+    /* ROLE SELECTOR */
+    .role-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(8px, 2vw, 12px);
+      margin-bottom: clamp(14px, 2.5vh, 20px);
+    }
+
+    .role-card {
+      border: 2px solid #333;
+      border-radius: clamp(10px, 2vw, 14px);
+      padding: clamp(10px, 2vh, 14px) clamp(6px, 2vw, 10px);
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      background: #1e1e1e;
+    }
+    .role-card:hover   { border-color: #555; background: #2a2a2a; }
+    .role-card:active  { border-color: #c0392b; background: rgba(192,57,43,0.1); }
+    .role-card.selected { border-color: #666; background: #2a2a2a; }
+
+    .role-card .role-icon { font-size: clamp(1.3rem, 4vw, 1.8rem); margin-bottom: 4px; display: block; }
+    .role-card .role-name { font-size: clamp(0.78rem, 2vw, 0.88rem); font-weight: 700; color: var(--text); }
+    .role-card .role-desc { font-size: clamp(0.65rem, 1.5vw, 0.72rem); color: var(--muted); margin-top: 2px; }
+
+    /* FORM */
+    .auth-form { display: none; }
+    .auth-form.active { display: block; }
+
+    .auth-form label {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: clamp(0.75rem, 2vw, 0.82rem);
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: clamp(10px, 2vh, 13px);
+    }
+
+    .auth-form input {
+      background: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: clamp(9px, 1.5vh, 12px) 14px;
+      color: var(--text);
+      font-size: clamp(0.82rem, 2vw, 0.9rem);
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: inherit;
+      width: 100%;
+    }
+    .auth-form input:focus { border-color: #666; }
+
+    /* BOTÓN SUBMIT */
+    .btn-submit {
+      width: 100%;
+      padding: clamp(10px, 2vh, 13px);
+      background: #2a2a2a;
+      color: #ccc;
+      border: 1px solid #444;
+      border-radius: 12px;
+      font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+      font-family: inherit;
+    }
+    .btn-submit:hover  { background: #3a3a3a; color: #fff; border-color: #666; }
+    .btn-submit:active { background: #c0392b; border-color: #c0392b; color: white; transform: scale(0.98); }
+
+    /* DIVIDER */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: clamp(10px, 2vh, 16px) 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* BOTÓN GOOGLE */
+    .btn-google {
+      width: 100%;
+      padding: clamp(9px, 1.8vh, 12px);
+      background: #2a2a2a;
+      color: #ccc;
+      border: 1px solid #444;
+      border-radius: 12px;
+      font-size: clamp(0.82rem, 2vw, 0.9rem);
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+      font-family: inherit;
+    }
+    .btn-google:hover  { background: #3a3a3a; color: #fff; border-color: #666; }
+    .btn-google:active { background: #c0392b; border-color: #c0392b; color: white; transform: scale(0.98); }
+    .btn-google svg    { width: 18px; height: 18px; flex-shrink: 0; }
+
+    /* MESSAGES */
+    .auth-msg {
+      font-size: 0.82rem;
+      text-align: center;
+      margin-top: 8px;
+      min-height: 18px;
+      font-weight: 500;
+    }
+    .auth-msg.error   { color: var(--accent); }
+    .auth-msg.success { color: var(--green); }
+
+    /* HINT */
+    .login-hint {
+      margin-top: clamp(12px, 2vh, 18px);
+      padding: 12px 14px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 10px;
+      font-size: clamp(0.7rem, 1.8vw, 0.76rem);
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .login-hint strong { color: var(--text); }
+
+    /* GOOGLE LOADING */
+    .g-loading {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(13,13,13,0.85);
+      backdrop-filter: blur(6px);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+      color: var(--text);
+      font-weight: 600;
+    }
+    .g-loading.show { display: flex; }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid #333;
+      border-top-color: #888;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── RESPONSIVE ANCHO ── */
+    @media (max-width: 400px) {
+      .role-card .role-desc { display: none; }
+      .login-hint { display: none; }
+    }
+
+    /* ── RESPONSIVE ALTO: landscape móvil ── */
+    @media (max-height: 580px) {
+      .login-wrapper { align-items: flex-start; }
+      .login-subtitle { display: none; }
+      .role-card .role-desc { display: none; }
+      .login-hint { display: none; }
+      .divider { margin: 8px 0; }
+    }
+
+    /* ── PANTALLAS GRANDES ── */
+    @media (min-width: 600px) {
+      .login-box { max-width: 460px; }
+    }
+  </style>
+
+  <!-- Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+  <!-- Loading overlay Google -->
+  <div class="g-loading" id="gLoading">
+    <div class="spinner"></div>
+    <span>Conectando con Google...</span>
+  </div>
+
+  <div class="login-wrapper">
+    <div class="login-box">
+
+      <div class="login-logo">🛒 TiendaExpress</div>
+      <p class="login-subtitle">Bienvenido — accede o crea tu cuenta</p>
+    <p style="text-align:center;font-size:0.7rem;color:#555;margin-top:-16px;margin-bottom:20px;">By <strong style="color:#888">MFL4bs</strong></p>
+
+      <!-- TABS -->
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('login')">Iniciar sesión</button>
+        <button class="tab-btn"        onclick="switchTab('register')">Registrarse</button>
+      </div>
+
+      <!-- ── FORMULARIO LOGIN ── -->
+      <div class="auth-form active" id="form-login">
+
+        <!-- Rol -->
+        <div class="role-selector" style="grid-template-columns:1fr 1fr 1fr">
+          <div class="role-card selected" id="login-role-user" onclick="selectRole('login','user')">
+            <span class="role-icon">👤</span>
+            <div class="role-name">Usuario</div>
+            <div class="role-desc">Comprar</div>
+          </div>
+          <div class="role-card" id="login-role-driver" onclick="selectRole('login','driver')">
+            <span class="role-icon">🚴</span>
+            <div class="role-name">Domiciliario</div>
+            <div class="role-desc">Entregas</div>
+          </div>
+          <div class="role-card" id="login-role-admin" onclick="selectRole('login','admin')">
+            <span class="role-icon">🛠️</span>
+            <div class="role-name">Admin</div>
+            <div class="role-desc">Gestionar</div>
+          </div>
+        </div>
+
+        <form onsubmit="doLogin(event)">
+          <label>Usuario o correo
+            <input type="text" id="lUser" placeholder="usuario o correo" required autocomplete="username"/>
+          </label>
+          <label>Contraseña
+            <input type="password" id="lPass" placeholder="••••••••" required autocomplete="current-password"/>
+          </label>
+          <button type="submit" class="btn-submit">Entrar →</button>
+        </form>
+
+        <p class="auth-msg error" id="loginError"></p>
+
+        <div class="divider">o continúa con</div>
+
+        <button class="btn-google" onclick="loginWithGoogle()">
+          <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+          Continuar con Google
+        </button>
+
+        <!-- Div oculto para Google One Tap -->
+        <div id="g_id_onload"
+          data-client_id="YOUR_GOOGLE_CLIENT_ID"
+          data-callback="handleGoogleCredential"
+          data-auto_select="false"
+          data-cancel_on_tap_outside="true">
+        </div>
+      </div>
+
+      <!-- ── FORMULARIO REGISTRO ── -->
+      <div class="auth-form" id="form-register">
+
+        <!-- Rol (solo usuario en registro público) -->
+        <div class="role-selector">
+          <div class="role-card selected" id="reg-role-user" onclick="selectRole('reg','user')">
+            <div class="role-icon">👤</div>
+            <div class="role-name">Usuario</div>
+            <div class="role-desc">Comprar y rastrear</div>
+          </div>
+          <div class="role-card" id="reg-role-admin" onclick="selectRole('reg','admin')">
+            <div class="role-icon">🛠️</div>
+            <div class="role-name">Admin</div>
+            <div class="role-desc">Requiere código</div>
+          </div>
+        </div>
+
+        <form onsubmit="doRegister(event)">
+          <label>Nombre completo
+            <input type="text" id="rName" placeholder="Tu nombre" required/>
+          </label>
+          <label>Correo electrónico
+            <input type="email" id="rEmail" placeholder="correo@ejemplo.com" required autocomplete="email"/>
+          </label>
+          <label>Usuario
+            <input type="text" id="rUser" placeholder="nombre de usuario" required autocomplete="username"/>
+          </label>
+          <label>Contraseña
+            <input type="password" id="rPass" placeholder="Mínimo 6 caracteres" minlength="6" required/>
+          </label>
+          <div id="adminCodeWrap" style="display:none">
+            <label>Código de administrador
+              <input type="password" id="rAdminCode" placeholder="Código secreto"/>
+            </label>
+          </div>
+          <button type="submit" class="btn-submit">Crear cuenta →</button>
+        </form>
+
+        <p class="auth-msg" id="registerMsg"></p>
+
+        <div class="divider">o regístrate con</div>
+
+        <button class="btn-google" onclick="loginWithGoogle()">
+          <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+          Registrarse con Google
+        </button>
+      </div>
+
+      <!-- HINT DEMO -->
+      <div class="login-hint">
+        <strong>Cuentas demo:</strong><br/>
+        👤 <strong>user</strong> / <strong>1234</strong><br/>
+        🚴 <strong>driver</strong> / <strong>driver123</strong> (Domiciliario)<br/>
+        🛠️ <strong>admin</strong> / <strong>admin123</strong> (Admin)<br/>
+        <span style="opacity:0.6">Código admin registro: <strong>ADMIN2025</strong></span>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+  // ── Guard: si ya hay sesión ir al index ───────────────────────────────────
+  if (sessionStorage.getItem('te_role')) window.location.replace('index.html');
+
+  // ── Base de usuarios (localStorage) ──────────────────────────────────────
+  const ADMIN_CODE = 'ADMIN2025';
+
+  function getUsers() {
+    return JSON.parse(localStorage.getItem('te_users') || '[]');
+  }
+
+  function saveUsers(users) {
+    localStorage.setItem('te_users', JSON.stringify(users));
+  }
+
+  // Usuarios demo precargados si no existen
+  (function seedUsers() {
+    const users = getUsers();
+    if (!users.find(u => u.username === 'user')) {
+      users.push({ name: 'Usuario Demo', email: 'user@demo.com', username: 'user', pass: '1234', role: 'user' });
+    }
+    if (!users.find(u => u.username === 'admin')) {
+      users.push({ name: 'Administrador', email: 'admin@demo.com', username: 'admin', pass: 'admin123', role: 'admin' });
+    }
+    if (!users.find(u => u.username === 'driver')) {
+      users.push({ name: 'Carlos Mendoza', email: 'driver@demo.com', username: 'driver', pass: 'driver123', role: 'driver' });
+    }
+    saveUsers(users);
+  })();
+
+  // ── Estado de tabs y roles ────────────────────────────────────────────────
+  const roles = { login: 'user', reg: 'user' };
+
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach((b, i) =>
+      b.classList.toggle('active', (i === 0) === (tab === 'login'))
+    );
+    document.getElementById('form-login').classList.toggle('active', tab === 'login');
+    document.getElementById('form-register').classList.toggle('active', tab === 'register');
+    document.getElementById('loginError').textContent = '';
+    document.getElementById('registerMsg').textContent = '';
+    document.getElementById('registerMsg').className = 'auth-msg';
+  }
+
+  function selectRole(form, role) {
+    roles[form] = role;
+    ['user','driver','admin'].forEach(r => {
+      const el = document.getElementById(`${form}-role-${r}`);
+      if (el) el.classList.toggle('selected', r === role);
+    });
+    if (form === 'reg') {
+      document.getElementById('adminCodeWrap').style.display = role === 'admin' ? 'block' : 'none';
+    }
+  }
+
+  // ── LOGIN ─────────────────────────────────────────────────────────────────
+  function doLogin(e) {
+    e.preventDefault();
+    const input = document.getElementById('lUser').value.trim();
+    const pass  = document.getElementById('lPass').value;
+    const role  = roles.login;
+    const err   = document.getElementById('loginError');
+
+    const users = getUsers();
+    const match = users.find(u =>
+      (u.username === input || u.email === input) && u.pass === pass && u.role === role
+    );
+
+    if (!match) { err.textContent = 'Credenciales o rol incorrecto.'; return; }
+
+    startSession(match);
+  }
+
+  // ── REGISTRO ──────────────────────────────────────────────────────────────
+  function doRegister(e) {
+    e.preventDefault();
+    const name  = document.getElementById('rName').value.trim();
+    const email = document.getElementById('rEmail').value.trim().toLowerCase();
+    const user  = document.getElementById('rUser').value.trim();
+    const pass  = document.getElementById('rPass').value;
+    const role  = roles.reg;
+    const msg   = document.getElementById('registerMsg');
+
+    if (role === 'admin') {
+      const code = document.getElementById('rAdminCode').value;
+      if (code !== ADMIN_CODE) {
+        msg.className = 'auth-msg error';
+        msg.textContent = 'Código de administrador incorrecto.';
+        return;
+      }
+    }
+
+    const users = getUsers();
+    if (users.find(u => u.username === user)) {
+      msg.className = 'auth-msg error';
+      msg.textContent = 'Ese nombre de usuario ya existe.';
+      return;
+    }
+    if (users.find(u => u.email === email)) {
+      msg.className = 'auth-msg error';
+      msg.textContent = 'Ese correo ya está registrado.';
+      return;
+    }
+
+    const newUser = { name, email, username: user, pass, role };
+    users.push(newUser);
+    saveUsers(users);
+
+    msg.className = 'auth-msg success';
+    msg.textContent = '✅ Cuenta creada. Iniciando sesión...';
+    setTimeout(() => startSession(newUser), 1000);
+  }
+
+  // ── LOGIN CON GOOGLE ──────────────────────────────────────────────────────
+  function loginWithGoogle() {
+    // Verificar que la Client ID esté configurada
+    const clientId = document.getElementById('g_id_onload').dataset.client_id;
+    if (clientId === '176723925773-5frq7dq5ogfq79oafqrqdo5s89a05f8h.apps.googleusercontent.com') {
+      alert('Para usar Google debes configurar tu Google Client ID.\n\nVe a console.cloud.google.com → APIs → Credentials → OAuth 2.0 Client ID\n\nLuego reemplaza YOUR_GOOGLE_CLIENT_ID en login.html');
+      return;
+    }
+
+    document.getElementById('gLoading').classList.add('show');
+
+    // Usar Google Identity Services popup
+    google.accounts.oauth2.initTokenClient({
+      client_id: clientId,
+      scope: 'email profile',
+      callback: (response) => {
+        if (response.error) {
+          document.getElementById('gLoading').classList.remove('show');
+          return;
+        }
+        // Obtener info del perfil con el access token
+        fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: `Bearer ${response.access_token}` }
+        })
+        .then(r => r.json())
+        .then(profile => handleGoogleProfile(profile))
+        .catch(() => document.getElementById('gLoading').classList.remove('show'));
+      }
+    }).requestAccessToken();
+  }
+
+  // Callback para Google One Tap (token JWT)
+  function handleGoogleCredential(response) {
+    document.getElementById('gLoading').classList.add('show');
+    // Decodificar JWT payload (no verificar firma en cliente, solo leer datos)
+    const payload = JSON.parse(atob(response.credential.split('.')[1]));
+    handleGoogleProfile({ email: payload.email, name: payload.name, sub: payload.sub });
+  }
+
+  function handleGoogleProfile(profile) {
+    document.getElementById('gLoading').classList.remove('show');
+    const email = profile.email.toLowerCase();
+    const users = getUsers();
+    let user = users.find(u => u.email === email);
+
+    if (!user) {
+      // Auto-registrar como usuario
+      user = {
+        name: profile.name || email,
+        email,
+        username: email.split('@')[0],
+        pass: null,
+        role: 'user',
+        google: true
+      };
+      users.push(user);
+      saveUsers(users);
+    }
+
+    startSession(user);
+  }
+
+  // ── INICIAR SESIÓN ────────────────────────────────────────────────────────
+  function startSession(user) {
+    sessionStorage.setItem('te_role', user.role);
+    sessionStorage.setItem('te_user', user.name || user.username);
+    window.location.replace('index.html');
+  }
+</script>
+</body>
+</html>
